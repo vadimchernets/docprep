@@ -97,13 +97,13 @@ def validate(cfg, formula_name, enforce=None):
     fams = {family(cfg, g) for g in gens}
     if len(fams) < s.get("min_vendors", 3):
         problems.append(f"generators span {len(fams)} vendor families; min_vendors is {s.get('min_vendors', 3)}")
-    if critics and family(cfg, critics[0]) != family(cfg, cons):
-        problems.append(f"the first critic ({critics[0]['name']}) is from {family(cfg, critics[0])}; "
-                        f"stage 3 reads in the consolidator's own family ({family(cfg, cons)}), "
-                        f"in a fresh context")
-    if critics and family(cfg, critics[-1]) == family(cfg, cons):
-        problems.append(f"the last critic ({critics[-1]['name']}) is from the consolidator's family "
-                        f"({family(cfg, cons)}); the last reader must come from another vendor")
+    home = family(cfg, cons)              # the consolidator's vendor family
+    if critics and family(cfg, critics[0]) != home:
+        problems.append(f"{critics[0]['name']} is from {family(cfg, critics[0])}; "
+                        f"stage 3 reads in the consolidator's own family ({home})")
+    if critics and family(cfg, critics[-1]) == home:
+        problems.append(f"{critics[-1]['name']} is from the consolidator's family "
+                        f"({home}); the last reader must come from another vendor")
     for r in critics:
         if cfg["providers"][r["provider"]]["type"] != "manual" and not r.get("search"):
             problems.append(f"{r['name']}: no search tool. A critic that cannot retrieve a source "
@@ -116,7 +116,8 @@ def validate(cfg, formula_name, enforce=None):
         if cfg["providers"][r["provider"]]["type"] != "manual" and str(r.get("model", "")).startswith("SET-"):
             problems.append(f"{r['name']}: model identifier not set ({r.get('model')})")
     if problems and enforce:
-        sys.exit(f"formula '{formula_name}' breaks the protocol:\n  - " + "\n  - ".join(problems))
+        sys.exit(f"formula '{formula_name}' breaks the protocol:\n  - "
+                 + "\n  - ".join(problems))
     return problems
 
 
