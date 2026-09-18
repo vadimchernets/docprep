@@ -14,7 +14,7 @@ the same text that appears as a worked example in:
 
 The protocol is one example of an assistance architecture, offered because a claim that
 architecture is a variable is worth little until someone states an architecture precisely enough
-to be checked, run and criticised. The models in `config.example.yaml` illustrate what was
+to be checked, run and criticized. The models in `config.example.yaml` illustrate what was
 publicly available in September 2026. They are not a requirement.
 
 ## Run it

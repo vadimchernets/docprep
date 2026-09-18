@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use this protocol or code, cite the paper it accompanies."
-title: "docprep: a worked example of an AI assistance architecture for document preparation"
+title: "docprep: a reference implementation of an AI assistance architecture for document preparation"
 authors:
   - family-names: Chernets
     given-names: Vadym
