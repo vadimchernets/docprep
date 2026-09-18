@@ -10,6 +10,8 @@ import sys
 import tempfile
 import types
 
+import pytest
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.dirname(HERE))
 
@@ -36,7 +38,9 @@ def fake_post(url, headers=None, json=None, timeout=None):
                           "content": [{"type": "text", "text": "part one, "},
                                       {"type": "server_tool_use", "name": "web_search"}]})
         return _Resp({"stop_reason": "end_turn",
-                      "content": [{"type": "text", "text": "part two. [R-free]\nVERDICT: approve"}]})
+                      "content": [{"type": "text", "text": "part two. [R-free]\n---LOG---\n"
+                                                           "agreed on everything; nothing dropped\n"
+                                                           "VERDICT: approve"}]})
     if url.endswith("/responses"):
         return _Resp({"output": [{"type": "web_search_call"},
                                  {"type": "message", "content": [{"type": "output_text",
@@ -67,9 +71,12 @@ CFG = {
                 {"name": "gpt", "provider": "openai", "model": "gpt-5.6-terra", "search": True},
                 {"name": "gemini", "provider": "google", "model": "gemini-3.1-pro-high", "search": True},
                 {"name": "meta", "provider": "meta", "model": "llama", "search": True}],
-            "consolidator": {"name": "consolidator", "provider": "anthropic", "model": "claude-sonnet-5"},
-            "critics": [{"name": "critic_internal", "provider": "anthropic", "model": "claude-sonnet-5"},
-                        {"name": "critic_cross", "provider": "openai", "model": "gpt-5.6-terra"}]},
+            "consolidator": {"name": "consolidator", "provider": "anthropic", "model": "claude-sonnet-5",
+                             "search": True},
+            "critics": [{"name": "critic_internal", "provider": "anthropic", "model": "claude-sonnet-5",
+                         "search": True},
+                        {"name": "critic_cross", "provider": "openai", "model": "gpt-5.6-terra",
+                         "search": True}]},
         "hand": {
             "generators": [
                 {"name": "a", "provider": "manual", "family": "anthropic"},
@@ -83,7 +90,8 @@ CFG = {
                 {"name": "claude", "provider": "anthropic", "model": "claude-sonnet-5"},
                 {"name": "gpt", "provider": "openai", "model": "gpt-5.6-terra"},
                 {"name": "gemini", "provider": "google", "model": "gemini-3.1-pro-high"}],
-            "consolidator": {"name": "consolidator", "provider": "anthropic", "model": "claude-sonnet-5"},
+            "consolidator": {"name": "consolidator", "provider": "anthropic", "model": "claude-sonnet-5",
+                             "search": True},
             "critics": [{"name": "c1", "provider": "openai", "model": "gpt-5.6-terra"},
                         {"name": "c2", "provider": "anthropic", "model": "claude-sonnet-5"}]},
     },
@@ -118,16 +126,21 @@ def test_api_pipeline_and_resume():
     assert set(m["label_map"].values()) == {"claude", "gpt", "gemini", "meta"}
     assert open(os.path.join(rd, "draft-claude.md")).read().startswith("part one, part two")
     cons = [s for s in m["stages"] if s["stage"] == "consolidate"][0]
-    assert cons["search_requested"] is False and cons["prompt_sha256_16"]
+    assert cons["search_requested"] is True and cons["search_applied"] is True and cons["prompt_sha256_16"]
     meta = [s for s in m["stages"] if s["role"] == "meta"][0]
     assert meta["search_requested"] is True and meta["search_applied"] is False
     assert "meta" in m["self_identification"]
+    assert m["self_identification"]["meta"]["action"].startswith("replaced")
+    # The raw draft is kept as evidence of what the generator actually said. Blinding is about
+    # what the consolidator READ, so the check belongs on its prompt.
+    assert "I am Llama" in open(os.path.join(rd, "draft-meta.md")).read()
     critic2 = [s for s in m["stages"] if s["role"] == "critic_cross"][0]
     assert critic2["saw_previous_report"] is True and critic2["family"] == "openai"
     assert m["verdicts"]["critic_cross"] == "VERDICT: approve with fixes"
     assert os.path.exists(os.path.join(rd, "consolidated.md"))
     assert os.path.exists(os.path.join(rd, "prompts", "draft-gpt.md"))
     prompt = open(os.path.join(rd, "prompts", "consolidation.md")).read()
+    assert "I am Llama" not in prompt and "[vendor name removed]" in prompt
     assert "### R4" in prompt and "claude" not in prompt.split("### R1")[1].lower()
     n = len(CALLS)
     # every anthropic stage takes two posts (paused turn): 2+1+1+1 generators, 2 consolidation,
@@ -195,3 +208,26 @@ if __name__ == "__main__":
             fn()
             print(f"ok  {name}")
     print("all tests passed")
+
+
+def test_role_rules_are_enforced():
+    """The three rules of the protocol are checks, not prose. Each breach stops the run."""
+    import copy
+
+    def проверь(правка, кусок):
+        cfg = copy.deepcopy(CFG)
+        правка(cfg["formulas"]["api"])
+        with pytest.raises(SystemExit) as e:
+            docprep.validate(cfg, "api")
+        assert кусок in str(e.value), str(e.value)
+
+    # a critic that cannot retrieve a source cannot check a citation against it
+    проверь(lambda f: f["critics"][0].pop("search"), "no search tool")
+    # stage 3 reads inside the consolidator's own family, in a fresh context
+    проверь(lambda f: f["critics"][0].update(provider="openai", model="gpt-5.6-terra"),
+            "in the consolidator's own family")
+    # stage 4 reads from another vendor, or it shares the blind spots it is there to catch
+    проверь(lambda f: f["critics"][-1].update(provider="anthropic", model="claude-sonnet-5"),
+            "must come from another vendor")
+    # a model identifier left as a placeholder is not a configuration
+    проверь(lambda f: f["generators"][0].update(model="SET-YOUR-MODEL"), "model identifier not set")

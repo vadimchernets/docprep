@@ -26,7 +26,7 @@
   <!-- Stage 0: one brief -->
   <rect x="20" y="205" width="125" height="80" rx="6" class="brf"/>
   <text x="82" y="228" class="st">STAGE 0</text>
-  <text x="82" y="248" class="b">One brief</text>
+  <text x="82" y="248" class="b">One task statement</text>
   <text x="82" y="266" class="s">identical for all</text>
 
   <!-- Stage 1: generators, isolated -->
@@ -81,7 +81,7 @@
   <text x="670" y="216" class="st">STAGE 2</text>
   <text x="670" y="236" class="b">Consolidator</text>
   <text x="670" y="253" class="s">blind to authorship</text>
-  <text x="670" y="269" class="i">sees R1 … Rn only</text>
+  <text x="670" y="269" class="i">sees B and R1 … Rn</text>
   <text x="670" y="286" class="s">writes D and a log</text>
 
   <!-- Stage 3: critic 1 -->
@@ -92,7 +92,7 @@
   <text x="850" y="236" class="b">Critic 1</text>
   <text x="850" y="253" class="s">consolidator's family</text>
   <text x="850" y="269" class="i">fresh context</text>
-  <text x="850" y="286" class="s">sees D only, writes V1</text>
+  <text x="850" y="286" class="s">sees B and D, writes V1</text>
 
   <!-- Stage 4: critic 2 -->
   <line x1="920" y1="245" x2="948" y2="245" class="ln" marker-end="url(#arr)"/>
@@ -102,7 +102,7 @@
   <text x="1020" y="236" class="b">Critic 2</text>
   <text x="1020" y="253" class="s">different vendor</text>
   <text x="1020" y="269" class="i">reads last</text>
-  <text x="1020" y="286" class="s">sees D and V1, writes V2</text>
+  <text x="1020" y="286" class="s">sees B, D and V1, writes V2</text>
 
   <!-- the document goes to critic 2 directly, not through critic 1 -->
   <path d="M670 195 C670 130, 1020 130, 1020 193" class="ln" stroke-dasharray="4 3" marker-end="url(#arr)"/>
@@ -127,7 +127,7 @@
   <text x="765" y="470" class="s">no stage rewrites the document; the signer stays accountable</text>
 
   <!-- notes -->
-  <text x="20" y="448" class="l">Vendors A to E are distinct organisations.</text>
+  <text x="20" y="448" class="l">Vendors A to E are distinct organizations.</text>
   <text x="20" y="465" class="l">Critic 2's vendor differs from the consolidator's.</text>
   <text x="20" y="482" class="l">Four generators for routine documents, five for high-stakes ones.</text>
 </svg>

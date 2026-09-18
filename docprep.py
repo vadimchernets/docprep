@@ -37,8 +37,9 @@ from concurrent.futures import ThreadPoolExecutor
 RUNS = "runs"
 TIMEOUT = 1800
 MARKER = "<!-- paste the answer below this line -->"
-# Drafts reach the consolidator without vendor names. This does not redact anything; it flags a
-# draft that names its own maker so the reader knows the blinding was weakened.
+# Drafts reach the consolidator without vendor names. A draft that names its own maker breaks the
+# blinding, so the phrase is replaced with [vendor name removed] before the draft is forwarded,
+# and the manifest records that it happened. Flagging alone would leave the label map useless.
 SELF_ID = re.compile(r"\b(?:I am|I'm|this is) (?:Claude|ChatGPT|GPT-[\d.]+\w*|Gemini|Grok|Llama)\b"
                      r"|\b(?:made|trained|developed) by (?:Anthropic|OpenAI|Google|xAI|Meta)\b", re.I)
 
@@ -96,9 +97,18 @@ def validate(cfg, formula_name, enforce=None):
     fams = {family(cfg, g) for g in gens}
     if len(fams) < s.get("min_vendors", 3):
         problems.append(f"generators span {len(fams)} vendor families; min_vendors is {s.get('min_vendors', 3)}")
+    if critics and family(cfg, critics[0]) != family(cfg, cons):
+        problems.append(f"the first critic ({critics[0]['name']}) is from {family(cfg, critics[0])}; "
+                        f"stage 3 reads in the consolidator's own family ({family(cfg, cons)}), "
+                        f"in a fresh context")
     if critics and family(cfg, critics[-1]) == family(cfg, cons):
         problems.append(f"the last critic ({critics[-1]['name']}) is from the consolidator's family "
                         f"({family(cfg, cons)}); the last reader must come from another vendor")
+    for r in critics:
+        if cfg["providers"][r["provider"]]["type"] != "manual" and not r.get("search"):
+            problems.append(f"{r['name']}: no search tool. A critic that cannot retrieve a source "
+                            f"cannot check a citation against it; set search: true or run this role "
+                            f"through the manual formula, where the interface searches by default")
     names = [r["name"] for r in gens + [cons] + critics]
     if len(set(names)) != len(names):
         problems.append("role names must be unique")
@@ -350,11 +360,13 @@ def run_pipeline(cfg, run_dir, manifest):
                 print(f"  {g['name']}: manual stage waiting, see MANUAL-{g['name']}.md")
                 waiting.append(g["name"])
             else:
-                drafts[g["name"]] = text
                 hits = sorted(set(m.group(0) for m in SELF_ID.finditer(text)))
                 if hits:
-                    print(f"  {g['name']}: names its maker ({hits[0]}); blinding weakened, recorded")
-                    manifest.setdefault("self_identification", {})[g["name"]] = hits
+                    text = SELF_ID.sub("[vendor name removed]", text)
+                    print(f"  {g['name']}: named its maker ({hits[0]}); removed before consolidation")
+                    manifest.setdefault("self_identification", {})[g["name"]] = {
+                        "found": hits, "action": "replaced with [vendor name removed]"}
+                drafts[g["name"]] = text
                 print(f"  {g['name']}: {len(text)} chars")
 
     if waiting:
@@ -392,8 +404,11 @@ def run_pipeline(cfg, run_dir, manifest):
         if log.strip():
             manifest["derived"].append(write(run_dir, "consolidation-log.md", log.strip()))
         else:
-            print("  consolidator wrote no ---LOG--- section; recorded")
             manifest["derived"].append({"file": "consolidation-log.md", "missing": True})
+            save_manifest(run_dir, manifest)
+            sys.exit("  the consolidator returned no ---LOG--- section. The log is where the "
+                     "disagreement survives; a run without it is not this protocol. The drafts and "
+                     "the merged document are kept in " + run_dir + " — rerun stage 2 from them.")
 
     # Stages 3 and 4: two critics. The second reads the first's report and comes from another vendor.
     reports = []
