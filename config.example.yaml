@@ -1,0 +1,67 @@
+# docprep: example configuration.
+#
+# The identifiers below are public models that were available in September 2026. They are an
+# illustration, not a requirement: the protocol is defined by roles, and any set of frontier
+# models from different vendors satisfies it. Replace each identifier with one your account
+# exposes. `python3 docprep.py check` validates the roles and asks every model to answer before
+# a run starts, so a long run does not die at the last stage.
+#
+# Substitutions inside a role are allowed (gpt-5.6-luna for gpt-5.6-terra, gpt-5.6-sol for
+# gpt-6-astra, claude-opus-5 for claude-sonnet-5). Mixing formulas mid-run is not.
+
+providers:
+  anthropic: {type: anthropic,         family: anthropic, api_key_env: ANTHROPIC_API_KEY}
+  openai:    {type: openai,            family: openai,    api_key_env: OPENAI_API_KEY}      # Responses API, web_search tool
+  google:    {type: gemini,            family: google,    api_key_env: GEMINI_API_KEY}
+  xai:       {type: openai_compatible, family: xai,       api_key_env: XAI_API_KEY,   base_url: "https://api.x.ai/v1"}
+  meta:      {type: openai_compatible, family: meta,      api_key_env: LLAMA_API_KEY, base_url: "https://api.llama.com/compat/v1"}
+  manual:    {type: manual}   # prompt goes to a file, the answer is pasted back; the role must name its family
+
+settings:
+  min_generators: 3          # stop if fewer drafts succeed: a council of two is not a council
+  min_vendors: 3             # generators must span at least this many vendor families
+  enforce_roles: true        # refuse a formula whose last critic shares the consolidator's family
+  retries: 2
+  retry_wait: 10             # seconds, multiplied by the attempt number
+  critic2_sees_critic1: true # the cross-vendor critic reads the first report before writing
+
+formulas:
+
+  # Routine documents.
+  basic:
+    generators:
+      - {name: claude, provider: anthropic, model: claude-sonnet-5,      search: true}
+      - {name: gpt,    provider: openai,    model: gpt-5.6-terra,        search: true}
+      - {name: gemini, provider: google,    model: gemini-3.1-pro-high,  search: true}
+      - {name: meta,   provider: meta,      model: SET-YOUR-LLAMA-MODEL}
+    consolidator: {name: consolidator, provider: anthropic, model: claude-sonnet-5}
+    critics:
+      - {name: critic_internal, provider: anthropic, model: claude-sonnet-5}
+      - {name: critic_cross,    provider: openai,    model: gpt-5.6-terra}
+
+  # High-stakes documents: a filing, a brief, anything a court will read.
+  # The consolidator wrote no draft, so it never judges its own text under a label.
+  enhanced:
+    generators:
+      - {name: claude, provider: anthropic, model: claude-opus-5,        search: true}
+      - {name: gpt,    provider: openai,    model: gpt-6-astra,          search: true}
+      - {name: gemini, provider: google,    model: gemini-3.1-pro-high,  search: true}
+      - {name: grok,   provider: xai,       model: SET-YOUR-GROK-MODEL}
+      - {name: meta,   provider: meta,      model: SET-YOUR-LLAMA-MODEL}
+    consolidator: {name: consolidator, provider: anthropic, model: claude-fable-5-1}
+    critics:
+      - {name: critic_internal, provider: anthropic, model: claude-fable-5-1}
+      - {name: critic_cross,    provider: openai,    model: gpt-6-astra}
+
+  # The same protocol run entirely through the consumer interfaces, for the deep-research
+  # modes that have no API equivalent. Every stage writes MANUAL-<role>.md and waits.
+  manual:
+    generators:
+      - {name: claude, provider: manual, family: anthropic, model: "Claude Opus 5, research mode"}
+      - {name: gpt,    provider: manual, family: openai,    model: "GPT-6-Astra, deep research"}
+      - {name: gemini, provider: manual, family: google,    model: "Gemini 3.1 Pro, deep research"}
+      - {name: grok,   provider: manual, family: xai,       model: "Grok, current version"}
+    consolidator: {name: consolidator, provider: manual, family: anthropic, model: "Claude Fable 5.1, fresh session"}
+    critics:
+      - {name: critic_internal, provider: manual, family: anthropic, model: "Claude Fable 5.1, fresh session"}
+      - {name: critic_cross,    provider: manual, family: openai,    model: "GPT-6-Astra, fresh session"}

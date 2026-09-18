@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1110 510" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#333333"/>
+    </marker>
+    <style>
+      .b  { font-size: 12.5px; font-weight: bold; fill: #111111; text-anchor: middle; }
+      .s  { font-size: 11px; fill: #555555; text-anchor: middle; }
+      .st { font-size: 10px; fill: #777777; text-anchor: middle; letter-spacing: 1px; }
+      .i  { font-size: 10.5px; fill: #555555; font-style: italic; text-anchor: middle; }
+      .l  { font-size: 11px; fill: #555555; text-anchor: start; }
+      .ln { stroke: #333333; stroke-width: 1.3; fill: none; }
+      .gen { fill: #f2f2f2; stroke: #333333; stroke-width: 1.2; }
+      .gen5 { fill: #f2f2f2; stroke: #333333; stroke-width: 1.2; stroke-dasharray: 4 3; }
+      .brf { fill: #ffffff; stroke: #333333; stroke-width: 1.2; }
+      .anon { fill: #ffffff; stroke: #333333; stroke-width: 1.2; }
+      .con { fill: #dde8f5; stroke: #2b4c7e; stroke-width: 1.4; }
+      .c1  { fill: #fbe9d6; stroke: #8a5a1f; stroke-width: 1.4; }
+      .c2  { fill: #f6d3c6; stroke: #8a2f1f; stroke-width: 1.8; }
+      .out { fill: #fafafa; stroke: #333333; stroke-width: 1.2; }
+      .hum { fill: #ffffff; stroke: #333333; stroke-width: 1.8; }
+      .grp { fill: none; stroke: #888888; stroke-width: 1; stroke-dasharray: 5 4; }
+    </style>
+  </defs>
+
+  <!-- Stage 0: one brief -->
+  <rect x="20" y="205" width="125" height="80" rx="6" class="brf"/>
+  <text x="82" y="228" class="st">STAGE 0</text>
+  <text x="82" y="248" class="b">One brief</text>
+  <text x="82" y="266" class="s">identical for all</text>
+
+  <!-- Stage 1: generators, isolated -->
+  <rect x="175" y="30" width="235" height="390" rx="8" class="grp"/>
+  <text x="292" y="50" class="st">STAGE 1 · GENERATORS, ISOLATED</text>
+
+  <rect x="190" y="65" width="205" height="50" rx="5" class="gen"/>
+  <text x="292" y="85" class="b">Generator 1 · vendor A</text>
+  <text x="292" y="102" class="s">search or deep research</text>
+
+  <rect x="190" y="133" width="205" height="50" rx="5" class="gen"/>
+  <text x="292" y="153" class="b">Generator 2 · vendor B</text>
+  <text x="292" y="170" class="s">search or deep research</text>
+
+  <rect x="190" y="201" width="205" height="50" rx="5" class="gen"/>
+  <text x="292" y="221" class="b">Generator 3 · vendor C</text>
+  <text x="292" y="238" class="s">search or deep research</text>
+
+  <rect x="190" y="269" width="205" height="50" rx="5" class="gen"/>
+  <text x="292" y="289" class="b">Generator 4 · vendor D</text>
+  <text x="292" y="306" class="s">open-weight model</text>
+
+  <rect x="190" y="337" width="205" height="50" rx="5" class="gen5"/>
+  <text x="292" y="357" class="b">Generator 5 · vendor E</text>
+  <text x="292" y="374" class="s">high-stakes documents only</text>
+
+  <text x="292" y="406" class="i">none sees another draft</text>
+
+  <!-- brief to generators -->
+  <line x1="145" y1="245" x2="188" y2="90"  class="ln" marker-end="url(#arr)"/>
+  <line x1="145" y1="245" x2="188" y2="158" class="ln" marker-end="url(#arr)"/>
+  <line x1="145" y1="245" x2="188" y2="226" class="ln" marker-end="url(#arr)"/>
+  <line x1="145" y1="245" x2="188" y2="294" class="ln" marker-end="url(#arr)"/>
+  <line x1="145" y1="245" x2="188" y2="362" class="ln" marker-end="url(#arr)"/>
+
+  <!-- generators to the relabelling step -->
+  <line x1="395" y1="90"  x2="438" y2="245" class="ln" marker-end="url(#arr)"/>
+  <line x1="395" y1="158" x2="438" y2="245" class="ln" marker-end="url(#arr)"/>
+  <line x1="395" y1="226" x2="438" y2="245" class="ln" marker-end="url(#arr)"/>
+  <line x1="395" y1="294" x2="438" y2="245" class="ln" marker-end="url(#arr)"/>
+  <line x1="395" y1="362" x2="438" y2="245" class="ln" marker-end="url(#arr)"/>
+
+  <!-- shuffle and relabel -->
+  <rect x="440" y="208" width="120" height="74" rx="10" class="anon"/>
+  <text x="500" y="232" class="b">Shuffle, relabel</text>
+  <text x="500" y="249" class="s">R1 … Rn</text>
+  <text x="500" y="266" class="i">map in manifest only</text>
+  <line x1="560" y1="245" x2="588" y2="245" class="ln" marker-end="url(#arr)"/>
+
+  <!-- Stage 2: consolidator -->
+  <rect x="590" y="195" width="160" height="100" rx="6" class="con"/>
+  <text x="670" y="216" class="st">STAGE 2</text>
+  <text x="670" y="236" class="b">Consolidator</text>
+  <text x="670" y="253" class="s">blind to authorship</text>
+  <text x="670" y="269" class="i">sees R1 … Rn only</text>
+  <text x="670" y="286" class="s">writes D and a log</text>
+
+  <!-- Stage 3: critic 1 -->
+  <line x1="750" y1="245" x2="778" y2="245" class="ln" marker-end="url(#arr)"/>
+  <text x="764" y="238" class="s">D</text>
+  <rect x="780" y="195" width="140" height="100" rx="6" class="c1"/>
+  <text x="850" y="216" class="st">STAGE 3</text>
+  <text x="850" y="236" class="b">Critic 1</text>
+  <text x="850" y="253" class="s">consolidator's family</text>
+  <text x="850" y="269" class="i">fresh context</text>
+  <text x="850" y="286" class="s">sees D only, writes V1</text>
+
+  <!-- Stage 4: critic 2 -->
+  <line x1="920" y1="245" x2="948" y2="245" class="ln" marker-end="url(#arr)"/>
+  <text x="934" y="238" class="s">V1</text>
+  <rect x="950" y="195" width="140" height="100" rx="6" class="c2"/>
+  <text x="1020" y="216" class="st">STAGE 4</text>
+  <text x="1020" y="236" class="b">Critic 2</text>
+  <text x="1020" y="253" class="s">different vendor</text>
+  <text x="1020" y="269" class="i">reads last</text>
+  <text x="1020" y="286" class="s">sees D and V1, writes V2</text>
+
+  <!-- the document goes to critic 2 directly, not through critic 1 -->
+  <path d="M670 195 C670 130, 1020 130, 1020 193" class="ln" stroke-dasharray="4 3" marker-end="url(#arr)"/>
+  <text x="845" y="139" class="i">D, unchanged</text>
+
+  <!-- everything flows into the output -->
+  <line x1="670"  y1="295" x2="670"  y2="343" class="ln" marker-end="url(#arr)"/>
+  <text x="682" y="323" class="l">D, log</text>
+  <line x1="850"  y1="295" x2="850"  y2="343" class="ln" marker-end="url(#arr)"/>
+  <text x="862" y="323" class="l">V1</text>
+  <line x1="1020" y1="295" x2="1020" y2="343" class="ln" marker-end="url(#arr)"/>
+  <text x="1032" y="323" class="l">V2, verdict</text>
+
+  <rect x="440" y="345" width="650" height="52" rx="6" class="out"/>
+  <text x="765" y="366" class="b">Output: document D · consolidation log · reports V1, V2 · manifest</text>
+  <text x="765" y="385" class="s">manifest: model identifiers, prompt and output hashes, timestamps, durations, label map</text>
+
+  <!-- the person decides -->
+  <line x1="765" y1="397" x2="765" y2="428" class="ln" marker-end="url(#arr)"/>
+  <rect x="440" y="430" width="650" height="52" rx="6" class="hum"/>
+  <text x="765" y="451" class="b">A person reads both reports and decides which fixes to apply</text>
+  <text x="765" y="470" class="s">no stage rewrites the document; the signer stays accountable</text>
+
+  <!-- notes -->
+  <text x="20" y="448" class="l">Vendors A to E are distinct organisations.</text>
+  <text x="20" y="465" class="l">Critic 2's vendor differs from the consolidator's.</text>
+  <text x="20" y="482" class="l">Four generators for routine documents, five for high-stakes ones.</text>
+</svg>

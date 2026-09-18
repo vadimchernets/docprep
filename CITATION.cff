@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this protocol or code, cite the paper it accompanies."
+title: "docprep: a worked example of an AI assistance architecture for document preparation"
+authors:
+  - family-names: Chernets
+    given-names: Vadym
+    orcid: "https://orcid.org/0009-0007-4845-3163"
+license: MIT
+preferred-citation:
+  type: article
+  title: "The Missing Variable in AI-Assisted Litigation: Architecture and the Quality of Pro Se Access to Justice"
+  authors:
+    - family-names: Chernets
+      given-names: Vadym
+  year: 2026
+  url: "https://ssrn.com/abstract=7120940"
+  doi: "10.5281/zenodo.22820626"
