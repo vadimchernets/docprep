@@ -17,6 +17,32 @@ architecture is a variable is worth little until someone states an architecture 
 to be checked, run and criticized. The models in `config.example.yaml` illustrate what was
 publicly available in September 2026. They are not a requirement.
 
+## How this relates to work you may already know
+
+This design belongs to a family the machine-learning literature calls **multi-agent debate**,
+**LLM council**, **mixture-of-agents** and **LLM ensemble**, and the checking step is an instance
+of **LLM-as-a-judge**. Four things distinguish the protocol implemented here, and each is enforced
+by `validate()` rather than left to the operator:
+
+1. **The generators never read one another.** There is no debate round. Independent evaluations of
+   debate structures report that extending discussion can make agents reinforce each other's
+   mistakes, so the drafts are produced in isolation and meet only at consolidation.
+2. **The consolidating model does not know which vendor wrote which draft.** Drafts arrive under
+   labels R1…Rn and a label map is written to the manifest afterwards. The established name for the
+   effect this addresses is **self-preference bias**: a model rates its own output higher when it
+   can tell which output is its own. Keeping the map makes that bias measurable after the fact
+   instead of merely hoped away.
+3. **Two critics in sequence, and the second is from a different vendor.** A same-family critic
+   catches what the family knows to look for; a cross-vendor critic catches what the family shares.
+4. **Every run leaves a manifest**: model identifiers, prompt and output hashes, timestamps, the
+   label map. A run that produces no log writes its manifest and exits rather than reporting success.
+
+Agreement among models is not proof. Where their errors are correlated, several answers carry less
+independent evidence than their number suggests; that argument is made separately in
+*Agreement Is Not Independent Evidence* ([SSRN 7390698](https://ssrn.com/abstract=7390698)).
+The manifest exists so that a reader can check what happened, not so that the output can be trusted
+because a machine produced it.
+
 ## Run it
 
 ```bash
