@@ -214,20 +214,20 @@ def test_role_rules_are_enforced():
     """The three rules of the protocol are checks, not prose. Each breach stops the run."""
     import copy
 
-    def проверь(правка, кусок):
+    def expect_rejected(change, fragment):
         cfg = copy.deepcopy(CFG)
-        правка(cfg["formulas"]["api"])
+        change(cfg["formulas"]["api"])
         with pytest.raises(SystemExit) as e:
             docprep.validate(cfg, "api")
-        assert кусок in str(e.value), str(e.value)
+        assert fragment in str(e.value), str(e.value)
 
     # a critic that cannot retrieve a source cannot check a citation against it
-    проверь(lambda f: f["critics"][0].pop("search"), "no search tool")
+    expect_rejected(lambda f: f["critics"][0].pop("search"), "no search tool")
     # stage 3 reads inside the consolidator's own family, in a fresh context
-    проверь(lambda f: f["critics"][0].update(provider="openai", model="gpt-5.6-terra"),
+    expect_rejected(lambda f: f["critics"][0].update(provider="openai", model="gpt-5.6-terra"),
             "in the consolidator's own family")
     # stage 4 reads from another vendor, or it shares the blind spots it is there to catch
-    проверь(lambda f: f["critics"][-1].update(provider="anthropic", model="claude-sonnet-5"),
+    expect_rejected(lambda f: f["critics"][-1].update(provider="anthropic", model="claude-sonnet-5"),
             "must come from another vendor")
     # a model identifier left as a placeholder is not a configuration
-    проверь(lambda f: f["generators"][0].update(model="SET-YOUR-MODEL"), "model identifier not set")
+    expect_rejected(lambda f: f["generators"][0].update(model="SET-YOUR-MODEL"), "model identifier not set")
