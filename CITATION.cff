@@ -1,6 +1,8 @@
 cff-version: 1.2.0
 message: "If you use this protocol or code, cite the paper it accompanies."
 title: "docprep: a reference implementation of an AI assistance architecture for document preparation"
+type: software
+repository-code: "https://github.com/vadimchernets/docprep"
 authors:
   - family-names: Chernets
     given-names: Vadym
@@ -14,4 +16,4 @@ preferred-citation:
       given-names: Vadym
   year: 2026
   url: "https://ssrn.com/abstract=7120940"
-  doi: "10.5281/zenodo.22820626"
+  doi: "10.2139/ssrn.7120940"

@@ -15,7 +15,8 @@ the same text that appears as a worked example in:
 The protocol is one example of an assistance architecture, offered because a claim that
 architecture is a variable is worth little until someone states an architecture precisely enough
 to be checked, run and criticized. The models in `config.example.yaml` illustrate what was
-publicly available in September 2026. They are not a requirement.
+publicly available in September 2026. They are not a requirement. docprep is independent research software, not
+affiliated with or endorsed by Anthropic, OpenAI, Google or xAI.
 
 ## How this relates to work you may already know
 
@@ -60,7 +61,8 @@ A run writes `runs/<timestamp>-<formula>/` containing the brief as sent, every p
 draft, the consolidated document, the consolidation log, both verification reports and
 `manifest.json`. The deliverable is the document **plus both reports**. The pipeline never
 applies a critic's fixes. A person decides which to apply and stays accountable for the text
-that leaves the room.
+that leaves the room. Nothing in this repository is legal advice: a run produces a draft for a person to check,
+not a document ready to file.
 
 ## Roles, not brands
 
@@ -88,4 +90,5 @@ repeated calls, and refusal of a same-family last critic.
 
 ## Licence
 
-MIT for the code. `PROTOCOL.md` is CC BY 4.0, matching the paper.
+MIT for the code. `PROTOCOL.md` is CC BY 4.0, matching the paper. The author develops multi-model orchestration
+methods and has filed related patent applications (pending; no patent has been granted).
